@@ -795,20 +795,6 @@ void Copter::ModeAuto::wp_run()
         float target_climb_rate = get_pilot_desired_climb_rate(channel_throttle->get_control_in());
         target_climb_rate = constrain_float(target_climb_rate, -get_pilot_speed_dn(), g.pilot_speed_up);
 
-
-        // get pilot desired lean angles Althold 
-        float target_roll, target_pitch;
-        get_pilot_desired_lean_angles(target_roll, target_pitch, copter.aparm.angle_max, attitude_control->get_althold_lean_angle_max());
-
-        // added control to resume the return plan, this may be due to loss of information, once a height change of more or less than 5 meters has been reached,
-        // whereby the aircraft stops its advance forward. To resume the flight plan, enter the pitch or roll 
-        if (target_roll != 0.0f || target_pitch != 0.0f) {
-            //Restart the automatic mode
-            copter.mode_auto.init(true);
-            //Re initialise wpnav targets after stopping when giving control of alt
-            wp_nav->shift_wp_origin_to_current_pos();
-        }
-       
         // call attitude controller
         // attitude Alt_Hold
         pos_control->set_speed_z(-get_pilot_speed_dn(), g.pilot_speed_up);
@@ -1325,11 +1311,7 @@ void Copter::ModeAuto::do_nav_guided_enable(const AP_Mission::Mission_Command& c
 void Copter::ModeAuto::do_guided_limits(const AP_Mission::Mission_Command& cmd)
 {
     copter.mode_guided.limit_set(
-<<<<<<< HEAD
         cmd.p1 * 1000, // convert seconds to ms
-=======
-        cmd.p1 * 1000, // convert seconds to ms
->>>>>>> ed63dbeba618830dfedbfad8dab09926258feef9
         cmd.content.guided_limits.alt_min * 100.0f,    // convert meters to cm
 		cmd.content.guided_limits.alt_max * 100.0f,    // convert meters to cm
 		cmd.content.guided_limits.horiz_max * 100.0f); // convert meters to cm
