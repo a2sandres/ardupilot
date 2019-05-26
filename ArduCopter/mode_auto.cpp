@@ -800,6 +800,31 @@ void Copter::ModeAuto::wp_run()
     // run waypoint controller
     copter.failsafe_terrain_set_status(wp_nav->update_wpnav());
 
+    if (g2.auto_man_alt == 1) {
+        
+        // get pilot desired climb rate alt control Alt_Hold
+        float target_climb_rate = get_pilot_desired_climb_rate(channel_throttle->get_control_in());
+        target_climb_rate = constrain_float(target_climb_rate, -get_pilot_speed_dn(), g.pilot_speed_up);
+
+        // call attitude controller
+        // attitude Alt_Hold
+        pos_control->set_speed_z(-get_pilot_speed_dn(), g.pilot_speed_up);
+        pos_control->set_accel_z(g.pilot_accel_z);
+        pos_control->set_alt_target_to_current_alt();
+        // change (inertial_nav.get_velocity_z ()) by (target_climb_rate) to add more control to the alt
+        pos_control->set_desired_velocity_z(target_climb_rate);
+        
+        // adjust climb rate using rangefinder Alt_Hold
+        if (copter.rangefinder_alt_ok()) {
+            // if rangefinder is ok, use surface tracking
+            target_climb_rate = get_surface_tracking_climb_rate(target_climb_rate, pos_control->get_alt_target(), G_Dt);
+        }
+
+        // update altitude target and call position controller Alt_Hold
+        pos_control->set_alt_target_from_climb_rate_ff(target_climb_rate, G_Dt, false);
+
+    }
+
     // call z-axis position controller (wpnav should have already updated it's alt target)
     pos_control->update_z_controller();
 
