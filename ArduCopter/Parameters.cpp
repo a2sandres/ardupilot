@@ -986,6 +986,13 @@ const AP_Param::GroupInfo ParametersG2::var_info[] = {
     AP_SUBGROUPINFO(follow, "FOLL", 27, ParametersG2, AP_Follow),
 #endif
 
+    // @Param: AUTO_MAN_ALT
+    // @DisplayName: Auto Manual Altitude Control
+    // @Description: This Behavior is based on the Auto and Alt_hold flight modes, which allows manual altitude control.While entering the height control the aircraft stops.it re starts the forward advance by giving it pitch input and continuing with the flight plan
+    // @Values: 0:Disabled,1:Enabled
+    // @User: Advanced
+    AP_GROUPINFO("AUTO_MAN_ALT", 28, ParametersG2, auto_man_alt, AUTO_MAN_ALT),
+
     AP_GROUPEND
 };
 

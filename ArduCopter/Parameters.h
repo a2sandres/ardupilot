@@ -587,6 +587,9 @@ public:
     AP_Follow follow;
 #endif
 
+// Auto Manual Alt param
+    AP_Int8 auto_man_alt;  // activate semi auto mode
+    
 };
 
 extern const AP_Param::Info        var_info[];
